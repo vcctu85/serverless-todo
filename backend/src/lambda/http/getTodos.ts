@@ -5,25 +5,12 @@ import * as AWS  from 'aws-sdk'
 
 const docClient = new AWS.DynamoDB.DocumentClient()
 const todoTable = process.env.TODO_TABLE
-const userTable = process.env.USER_TABLE
+
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   // TODO: Get all TODO items for a current user
 
   const userId = event.pathParameters.userId
-  const validUserId = await userExists(userId)
-
-  if (!validUserId) {
-    return {
-      statusCode: 404,
-      headers: {
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({
-        error: 'User does not exist in table'
-      })
-    }
-  }
 
   const todo_items = await getTODOPerUser(userId)
   return {
@@ -38,27 +25,15 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   
 }
 
-async function userExists(userId: string) {
-  const result = await docClient
-    .get({
-      TableName: userTable,
-      Key: {
-        id: userId
-      }
-    })
-    .promise()
 
-  console.log('Get user: ', result)
-  return !!result.Item
-}
-
-async function getTODOPerUser(groupId: string) {
+async function getTODOPerUser(userId: string) {
   const result = await docClient.query({
     TableName: todoTable,
+    //todo
     IndexName: 'index-name',
-    KeyConditionExpression: 'paritionKey = :paritionKey',
+    KeyConditionExpression: 'userId = :userId',
     ExpressionAttributeValues: {
-      ':paritionKey': partitionKeyValue
+      userId: userId
     }
   }).promise()
 

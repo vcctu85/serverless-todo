@@ -13,9 +13,15 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       TableName: todoTable,
       Key: {
         todoId: todoId
-        userId: userId
       }
     }).promise()
-    return undefined
-  }
-)
+
+    return {
+      statusCode: 201,
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: "Deleted TODO item."
+    }
+}
+
