@@ -55,11 +55,11 @@ async function userExists(userId: string) {
 async function getTODOPerUser(groupId: string) {
   const result = await docClient.query({
     TableName: todoTable,
-    KeyConditionExpression: 'groupId = :groupId',
+    IndexName: 'index-name',
+    KeyConditionExpression: 'paritionKey = :paritionKey',
     ExpressionAttributeValues: {
-      ':groupId': groupId
-    },
-    ScanIndexForward: false
+      ':paritionKey': partitionKeyValue
+    }
   }).promise()
 
   return result.Items
