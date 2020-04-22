@@ -4,6 +4,7 @@ import * as uuid from 'uuid'
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
+import { getUserId } from '../utils'
 
 const docClient = new AWS.DynamoDB.DocumentClient()
 const todoTable = process.env.TODO_TABLE
@@ -11,13 +12,13 @@ const todoTable = process.env.TODO_TABLE
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const newTodo: CreateTodoRequest = JSON.parse(event.body)
-
+  const authorization = event.headers.Authorization
+  const split = authorization.split(' ')
+  const jwtToken = split[1]
   // TODO: Implement creating a new TODO item
 
-  const userId = event.pathParameters.userId
-
   const todoId = uuid.v4()
-  const newItem = await createTodo(userId, todoId, newTodo)
+  const newItem = await createTodo(jwtToken, todoId, newTodo)
   
   return {
     statusCode: 201,
@@ -31,11 +32,11 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 }
 
 
-async function createTodo(userId: string, todoId: string, newTodo: CreateTodoRequest) {
+async function createTodo(jwtToken: string, todoId: string, newTodo: CreateTodoRequest) {
   const timestamp = new Date().toISOString()
   const newItem = {
     todoId,
-    userId,
+    userId: getUserId(jwtToken),
     timestamp,
     ...newTodo,
     imageUrl: 'https://${bucketName}.s3.amazonaws.com/${todoId}'
