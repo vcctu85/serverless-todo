@@ -65,6 +65,7 @@ functions:
       - http:
           method: post
           path: todos
+      
 
   # TODO: Configure this function
   UpdateTodo:
@@ -93,17 +94,6 @@ functions:
 resources:
   Resources:
     # TODO: Add any necessary AWS resources
-    UsersDynamoDBTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
-        TableName: ${self:provider.environment.USERS_TABLE}
         
     TodosTable:
       Type: AWS::DynamoDB::Table
@@ -132,14 +122,14 @@ resources:
             Projection:
               ProjectionType: ALL # What attributes will be copied to an index
 
-    RequestBodyValidator:
-      Type: AWS::ApiGateway::RequestValidator
-      Properties:
-        Name: 'request-body-validator'
-        RestApiId:
-          Ref: ApiGatewayRestApi
-        ValidateRequestBody: true
-        ValidateRequestParameters: false
+    # RequestBodyValidator:
+    #   Type: AWS::ApiGateway::RequestValidator
+    #   Properties:
+    #     Name: 'request-body-validator'
+    #     RestApiId:
+    #       Ref: ApiGatewayRestApi
+    #     ValidateRequestBody: true
+    #     ValidateRequestParameters: false
 
     AttachmentsBucket:
       Type: AWS::S3::AttachmentsBucket

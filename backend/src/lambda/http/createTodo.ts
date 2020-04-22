@@ -4,7 +4,6 @@ import * as uuid from 'uuid'
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
-import { getUserId } from '../utils'
 
 const docClient = new AWS.DynamoDB.DocumentClient()
 const todoTable = process.env.TODO_TABLE
@@ -18,6 +17,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   // TODO: Implement creating a new TODO item
 
   const todoId = uuid.v4()
+  //const authHeader = event.headers['Authorization']
+
   const newItem = await createTodo(jwtToken, todoId, newTodo)
   
   return {
@@ -36,7 +37,7 @@ async function createTodo(jwtToken: string, todoId: string, newTodo: CreateTodoR
   const timestamp = new Date().toISOString()
   const newItem = {
     todoId,
-    userId: getUserId(jwtToken),
+    userId: jwtToken,
     timestamp,
     ...newTodo,
     imageUrl: 'https://${bucketName}.s3.amazonaws.com/${todoId}'
