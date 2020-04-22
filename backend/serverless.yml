@@ -17,6 +17,7 @@ provider:
     TODO_ID_INDEX: TodoIdIndex
     IMAGES_S3_BUCKET: serverless-todo-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
+    AUTH_0_SECRET: W3EMcKXSApqH7mCtJUncu1Wnr3EMoSPvKRjrIY3wqVgTHF7WLWhcxjrxjRTMpXBW
 
   iamRoleStatements:
     - Effect: Allow
