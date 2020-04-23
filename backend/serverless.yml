@@ -38,12 +38,12 @@ custom:
         title: Serverless TODO API
         description: Serverless application for TODO items
     models:
-      - name: GroupRequest
-        contentType: application/json
-        schema: ${file(models/create-group-request.json)}
-      - name: ImageRequest
-        contentType: application/json
-        schema: ${file(models/create-image-request.json)}
+      - name: TodoItem
+        contentType: application/typescript
+        schema: ${file(models/TodoItem.ts)}
+      - name: TodoUpdate
+        contentType: application/typescript
+        schema: ${file(models/TodoUpdate.ts)}
 
 functions:
 
@@ -99,25 +99,23 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
-          - AttributeName: partitionKey
+          - AttributeName: todoId
             AttributeType: S
-          - AttributeName: sortKey
-            AttributeType: S
-          - AttributeName: indexKey
+          - AttributeName: userId
             AttributeType: S
         KeySchema:
-          - AttributeName: partitionKey
+          - AttributeName: todoId
             KeyType: HASH
-          - AttributeName: sortKey
+          - AttributeName: userId
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.TODO_TABLE}
         LocalSecondaryIndexes:
-          - IndexName: ${self:provider.environment.INDEX_NAME}
+          - IndexName: ${self:provider.environment.TODO_ID_INDEX}
             KeySchema:
-              - AttributeName: partitionKey
+              - AttributeName: todoId
                 KeyType: HASH
-              - AttributeName: indexKey
+              - AttributeName: userId
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL # What attributes will be copied to an index
