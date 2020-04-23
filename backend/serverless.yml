@@ -15,10 +15,10 @@ provider:
   environment:
     TODO_TABLE: Todo-${self:provider.stage}
     TODO_ID_INDEX: TodoIdIndex
-    IMAGES_S3_BUCKET: serverless-todo-images-${self:provider.stage}
+    IMAGES_S3_BUCKET: vcctu85-serverless-todo-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
     AUTH_0_SECRET: W3EMcKXSApqH7mCtJUncu1Wnr3EMoSPvKRjrIY3wqVgTHF7WLWhcxjrxjRTMpXBW
-
+#need to write IAM role individually for each function
   iamRoleStatements:
     - Effect: Allow
       Action:
