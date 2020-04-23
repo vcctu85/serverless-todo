@@ -16,7 +16,6 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const split = authorization.split(' ')
   const jwtToken = split[1]
   // TODO: Implement creating a new TODO item
-  // .sub or .sub.payload?
   const userId = decode(jwtToken).sub
   const todoId = uuid.v4()
   //const authHeader = event.headers['Authorization']

@@ -1,17 +1,35 @@
 import { CustomAuthorizerEvent, CustomAuthorizerResult } from 'aws-lambda'
 import 'source-map-support/register'
 
-import { verify, decode } from 'jsonwebtoken'
+import { verify} from 'jsonwebtoken'
 import { createLogger } from '../../utils/logger'
 //import Axios from 'axios'
-import { Jwt } from '../../auth/Jwt'
+// import { Jwt } from '../../auth/Jwt'
 import { JwtPayload } from '../../auth/JwtPayload'
 
-const auth0Secret = process.env.AUTH_0_SECRET
+// const auth0Secret = process.env.AUTH_0_SECRET
 
 const logger = createLogger('auth')
 
-//const jwksUrl = 'https://test-endpoint.auth0.com/.well-known/jwks.json'
+const cert = `-----BEGIN CERTIFICATE-----
+MIIDBzCCAe+gAwIBAgIJBSnziKwoVe5lMA0GCSqGSIb3DQEBCwUAMCExHzAdBgNV
+BAMTFmRldi1sczV1LXVoaC5hdXRoMC5jb20wHhcNMjAwNDIyMDAxNDUzWhcNMzMx
+MjMwMDAxNDUzWjAhMR8wHQYDVQQDExZkZXYtbHM1dS11aGguYXV0aDAuY29tMIIB
+IjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAu7TxczBLHBLFNMXsmip9yPwz
+4o7xUo3DjzNXBC3x1Ci8bKlBkCy0VOsDAocsGlauf8559+YzxXWFiok6h7Y2VAlv
+g89f7on1vU6AzJlCFviraTdgbANH9F2y2nUd6N0DZLRs7/862utIHmi4y8/Z2R1u
+QWdd1CsGwzHoNHxbJcbbO4anGLuVQBn4mwZG5KYjzvZ9Nu/KaMn5x/V+K4lUugjD
+Z0Yg7NJRMIpvVlZkPVySh5UT/kqA12NYvGj67fMkwVRDoKLBX/CWQou03YkA0aDb
+kd8BWAfW2pujh9zNRpTt8BebPd6+f5s/SEezS8uD2id0EuoDbucNhi6MAh5bLQID
+AQABo0IwQDAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBRp0EvDoGFTO4QABBNf
+n+bz8QuX6DAOBgNVHQ8BAf8EBAMCAoQwDQYJKoZIhvcNAQELBQADggEBAG5yAOKj
+spOgdgOSm4f7Pinfmcv3Vz4l4Vk/hqwpc59Hgy0vcshwGjrvWobziIzxX3Gf2bN8
+njjX2cSjhDR76jCjReL/heNNxcSvyRslL77swFFQChiSJ+3Ha68u6PfCm+4VxoPi
+N25WznGbaBuKzk/hgZsjoeita7WJkjNoRVjvwurnLJVVQUgLxGxvhyF6CnfV6qoI
+WK9C2zC7rkNKZe7PH1UfbEjk45Jw/zeZf3DwXf//QwDUohAiEx9q/fYOMMrnmpVk
+DSK9PM7p2xAzslZ+c3+HECrUSgju38mko8+2gxzGRCJtoEZWXAoHHKKl/jdSfeWN
+2LqEpUKrlao597E=
+-----END CERTIFICATE-----`
 
 export const handler = async (
   event: CustomAuthorizerEvent
@@ -53,13 +71,11 @@ export const handler = async (
   }
 }
 
-async function verifyToken(authHeader: string): Promise<JwtPayload> {
-  const token = getToken(authHeader)
-  const jwt: Jwt = decode(token, { complete: true }) as Jwt
+async function verifyToken(authHeader: string): JwtPayload {
   
-  console.log(jwt)
   // TODO: Implement token verification
-  return verify(token, auth0Secret) as JwtPayload
+  const jwtToken = getToken(authHeader)
+  return verify(jwtToken, cert, { algorithms: ['RS256']}) as JwtPayload
 }
 
 function getToken(authHeader: string): string {
