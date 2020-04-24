@@ -71,7 +71,7 @@ export const handler = async (
   }
 }
 
-async function verifyToken(authHeader: string): JwtPayload {
+async function verifyToken(authHeader: string): Promise<JwtPayload> {
   
   // TODO: Implement token verification
   const jwtToken = getToken(authHeader)
