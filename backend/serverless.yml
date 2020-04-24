@@ -7,7 +7,7 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs8.10
+  runtime: nodejs12.x
 
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
@@ -26,13 +26,13 @@ custom:
         version: v1.0.0
         title: Serverless TODO API
         description: Serverless application for TODO items
-    models:
-      - name: TodoItem
-        contentType: application/typescript
-        schema: ${file(models/TodoItem.ts)}
-      - name: TodoUpdate
-        contentType: application/typescript
-        schema: ${file(models/TodoUpdate.ts)}
+    # models:
+    #   - name: TodoItem
+    #     contentType: application/typescript
+    #     schema: ${file(models/TodoItem.ts)}
+    #   - name: TodoUpdate
+    #     contentType: application/typescript
+    #     schema: ${file(models/TodoUpdate.ts)}
 
 functions:
 
@@ -46,6 +46,8 @@ functions:
       - http:
           method: get
           path: todos
+          cors: true
+          auth: Auth
     iamRoleStatements:
     - Effect: Allow
       Action:
@@ -57,7 +59,11 @@ functions:
       Action:
         - dynamodb:Query
       Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODO_TABLE}/index/${self:provider.environment.TODO_ID_INDEX}
-
+    - Effect: Allow
+      Action:
+        - xray:PutTelemetryRecords
+        - xray:PutTraceSegments
+      Resource: "*"
 
   # TODO: Configure this function
   CreateTodo:
@@ -82,7 +88,7 @@ functions:
       Action:
         - xray:PutTelemetryRecords
         - xray:PutTraceSegments
-      Resouce: "*"
+      Resource: "*"
       
 
   # TODO: Configure this function
@@ -108,7 +114,7 @@ functions:
       Action:
         - xray:PutTelemetryRecords
         - xray:PutTraceSegments
-      Resouce: "*"
+      Resource: "*"
 
   # TODO: Configure this function
   DeleteTodo:
@@ -133,7 +139,7 @@ functions:
       Action:
         - xray:PutTelemetryRecords
         - xray:PutTraceSegments
-      Resouce: "*"
+      Resource: "*"
 
   # TODO: Configure this function
   GenerateUploadUrl:
@@ -154,21 +160,22 @@ functions:
       Action:
         - xray:PutTelemetryRecords
         - xray:PutTraceSegments
-      Resouce: "*"
+      Resource: "*"
 
 resources:
   Resources:
     # TODO: Add any necessary AWS resources
-    GatewayReponseDefault4XX:
+    GatewayResponseDefault4XX:
       Type: AWS::ApiGateway::GatewayResponse
       Properties:
         ResponseParameters:
           gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
           gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
           gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS,POST'"
-        ReponseType: DEFAULT_4XX
+        ResponseType: DEFAULT_4XX
         RestApiId:
           Ref: ApiGatewayRestApi
+
     TodosTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -204,7 +211,7 @@ resources:
     #     ValidateRequestParameters: false
 
     AttachmentsBucket:
-      Type: AWS::S3::AttachmentsBucket
+      Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:provider.environment.IMAGES_S3_BUCKET}
         CorsConfiguration:
@@ -234,5 +241,5 @@ resources:
               Principal: '*'
               Action: 's3:GetObject'
               Resource: 'arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*'
-      Bucket: !Ref AttachmentsBucket
+        Bucket: !Ref AttachmentsBucket
 
