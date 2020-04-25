@@ -11,6 +11,7 @@ const todoTable = process.env.TODO_TABLE
 
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  console.log("EVENT:", event);
   const newTodo: CreateTodoRequest = JSON.parse(event.body)
   const authorization = event.headers.Authorization
   const split = authorization.split(' ')

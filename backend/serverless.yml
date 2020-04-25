@@ -73,7 +73,7 @@ functions:
           method: post
           path: todos
           cors: true
-          auth: Auth
+          authorizer: Auth
     iamRoleStatements:
     - Effect: Allow
       Action:
@@ -99,7 +99,7 @@ functions:
           method: patch
           path: todos/{todoId}
           cors: true
-          auth: Auth
+          authorizer: Auth
     iamRoleStatements:
     - Effect: Allow
       Action:
@@ -124,7 +124,7 @@ functions:
           method: delete
           path: todos/{todoId}
           cors: true
-          auth: Auth
+          authorizer: Auth
     iamRoleStatements:
     - Effect: Allow
       Action:
@@ -165,16 +165,16 @@ functions:
 resources:
   Resources:
     # TODO: Add any necessary AWS resources
-    # GatewayResponseDefault4XX:
-    #   Type: AWS::ApiGateway::GatewayResponse
-    #   Properties:
-    #     ResponseParameters:
-    #       gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
-    #       gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-    #       gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS,POST'"
-    #     ResponseType: DEFAULT_4XX
-    #     RestApiId:
-    #       Ref: ApiGatewayRestApi
+    GatewayResponseDefault4XX:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS,POST'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: ApiGatewayRestApi
 
     TodosTable:
       Type: AWS::DynamoDB::Table
