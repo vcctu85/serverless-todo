@@ -7,7 +7,7 @@ import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 
 const docClient = new AWS.DynamoDB.DocumentClient()
 const todoTable = process.env.TODO_TABLE
-//const bucketName = process.env.IMAGES_S3_BUCKET
+const bucketName = process.env.IMAGES_S3_BUCKET
 
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -43,7 +43,7 @@ async function createTodo(userId: string, todoId: string, newTodo: CreateTodoReq
     todoId,
     timestamp,
     ...newTodo,
-    imageUrl: `https://hello.s3.amazonaws.com/${todoId}`
+    imageUrl: `https://${bucketName}/s3.amazonaws.com/${todoId}`
   }
 
   console.log('Storing new item: ', newItem)
