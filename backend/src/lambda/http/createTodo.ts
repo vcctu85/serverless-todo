@@ -12,7 +12,7 @@ const bucketName = process.env.IMAGES_S3_BUCKET
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   console.log("EVENT:", event);
-  const newTodo: CreateTodoRequest = JSON.parse(event.body)
+  const newTodo: CreateTodoRequest = JSON.parse(event['body'])
   // const authorization = event.headers.Authorization
   // const split = authorization.split(' ')
   // const jwtToken = split[1]
