@@ -33,7 +33,7 @@ functions:
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
 
-  # TODO: Configure this function
+  # TODO: Configure this functions
   GetTodos:
     handler: src/lambda/http/getTodos.handler
     events:
@@ -41,6 +41,22 @@ functions:
           method: get
           path: todos
           cors: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Scan
+          - dynamodb:GetItem
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODO_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODO_TABLE}/index/${self:provider.environment.TODO_ID_INDEX}       
+      - Effect: "Allow"
+        Action:
+          - xray:PutTelemetryRecords
+          - xray:PutTraceSegments
+        Resource: "*"
 
   # TODO: Configure this function
   CreateTodo:

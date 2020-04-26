@@ -6,13 +6,14 @@ const docClient = new AWS.DynamoDB.DocumentClient()
 const todoTable = process.env.TODO_TABLE
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    const todoId = event.pathParameters.todoId
-     
+    //const todoId = event.pathParameters.todoId
+     console.log(event)
     // TODO: Remove a TODO item by id
     await docClient.delete({
       TableName: todoTable,
       Key: {
-        todoId: todoId
+        todoId: '1',
+        userId: 'vitu'
       }
     }).promise()
 
