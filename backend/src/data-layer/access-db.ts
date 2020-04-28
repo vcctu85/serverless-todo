@@ -1,9 +1,8 @@
-import { create } from "domain"
 const docClient = new AWS.DynamoDB.DocumentClient()
 import * as AWS  from 'aws-sdk'
 const todoTable = process.env.TODO_TABLE
 import { TodoItem } from '../models/TodoItem'
-import { TodoUpdate } from '../models/TodoItem'
+//import { TodoUpdate } from '../models/TodoUpdate'
 
 export async function create(newItem) : Promise<TodoItem> {
 
@@ -26,8 +25,8 @@ export async function deleteItem(todoId, userId) {
       }).promise()
 }
 
-export async function getItems(userId) : Promise<> {
-    const items = await docClient.query({
+export async function getItems(userId) : Promise<TodoItem[]> {
+    const result = await docClient.query({
         TableName: todoTable,
         //todo
         KeyConditionExpression: 'userId = :userId',
@@ -35,12 +34,12 @@ export async function getItems(userId) : Promise<> {
           ':userId': userId
         }
       }).promise()
-    return items
+    return result.Items as TodoItem[]
 
 }
 
-export async function updateItem(updatedTodo, todoId) : Promise<TodoUpdate> {
-    const todo = await docClient.update({
+export async function updateItem(updatedTodo, todoId) {
+    await docClient.update({
         TableName: todoTable,
         Key: {
           todoId: todoId,
@@ -54,5 +53,20 @@ export async function updateItem(updatedTodo, todoId) : Promise<TodoUpdate> {
         
       }).promise()
       
-      return todo
 }
+
+export async function setAttachmentUrl(todoId, userId, presignedUrl) {
+    await docClient.update({
+        TableName: todoTable,
+        Key: {
+          todoId,
+          userId,
+        },
+        UpdateExpression: 'set presignedUrl = :presignedUrl',
+        ExpressionAttributeValues: {
+          ':presignedUrl': presignedUrl,
+        },
+        // ReturnValues: 'UPDATED_NEW',
+      })
+      .promise();
+  }

@@ -37,5 +37,5 @@ export async function getTODOPerUser(userId: string) {
   console.log("Getting all todo items for this user")
   const result = getItems(userId)
 
-  return result.Items
+  return result
 }
