@@ -1,15 +1,14 @@
 import 'source-map-support/register'
-import * as AWS  from 'aws-sdk'
+
 import * as uuid from 'uuid'
 import { getToken } from '../auth/auth0Authorizer'
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 import { decode } from 'jsonwebtoken'
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
+import { createLogger } from '../../utils/logger'
 
-const docClient = new AWS.DynamoDB.DocumentClient()
-const todoTable = process.env.TODO_TABLE
-const bucketName = process.env.IMAGES_S3_BUCKET
 
+const logger = createLogger("createTodo")
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   console.log("EVENT:", event);
@@ -30,29 +29,11 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       'Access-Control-Allow-Credentials': true
     },
     body: JSON.stringify({
-      newItem: newItem
+         newItem
     })
   }
 }
 
 
-async function createTodo(userId: string, todoId: string, newTodo: CreateTodoRequest) {
-  const timestamp = new Date().toISOString()
-  const newItem = {
-    userId,
-    todoId,
-    timestamp,
-    ...newTodo,
-    imageUrl: `https://${bucketName}/s3.amazonaws.com/${todoId}`
-  }
 
-  console.log('Storing new item: ', newItem)
-
-  await docClient
-    .put({
-      TableName: todoTable,
-      Item: newItem
-    }).promise()
-
-  return newItem
-}
+  

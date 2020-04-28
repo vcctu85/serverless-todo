@@ -6,6 +6,7 @@ const docClient = new AWS.DynamoDB.DocumentClient()
 const todoTable = process.env.TODO_TABLE
 import { decode } from 'jsonwebtoken'
 import { getToken } from '../auth/auth0Authorizer'
+import { delete } from '../../data-layer/access-db'
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const todoId = event.pathParameters.todoId
@@ -15,13 +16,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     // TODO: Remove a TODO item by id
     console.log("Decoded userId: ", userId)
     console.log("Deleting todo item.")
-    await docClient.delete({
-      TableName: todoTable,
-      Key: {
-        todoId: todoId,
-        userId: userId
-      }
-    }).promise()
+
+    delete(todoId, userId)
 
     return {
       statusCode: 201,
