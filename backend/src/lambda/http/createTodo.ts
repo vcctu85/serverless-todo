@@ -52,8 +52,7 @@ async function createTodo(userId: string, todoId: string, newTodo: CreateTodoReq
     .put({
       TableName: todoTable,
       Item: newItem
-    })
-    .promise()
+    }).promise()
 
   return newItem
 }
