@@ -52,13 +52,12 @@ export const handler = async (
 }
 
 async function verifyToken(authHeader: string): Promise<JwtPayload> {
-  
   // TODO: Implement token verification
   const jwtToken = getToken(authHeader)
   return verify(jwtToken, auth0Secret, { algorithms: ['RS256']}) as JwtPayload
 }
 
-function getToken(authHeader: string): string {
+export function getToken(authHeader: string): string {
   if (!authHeader) throw new Error('No authentication header')
 
   if (!authHeader.toLowerCase().startsWith('bearer '))

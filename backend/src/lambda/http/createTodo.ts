@@ -1,8 +1,9 @@
 import 'source-map-support/register'
 import * as AWS  from 'aws-sdk'
 import * as uuid from 'uuid'
+import { getToken } from '../auth/auth0Authorizer'
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
-// import { decode } from 'jsonwebtoken'
+import { decode } from 'jsonwebtoken'
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 
 const docClient = new AWS.DynamoDB.DocumentClient()
@@ -13,15 +14,14 @@ const bucketName = process.env.IMAGES_S3_BUCKET
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   console.log("EVENT:", event);
   const newTodo: CreateTodoRequest = JSON.parse(event['body'])
-  // const authorization = event.headers.Authorization
-  // const split = authorization.split(' ')
-  // const jwtToken = split[1]
+  const jwtToken = getToken(event.headers['Authorization'])
   // // TODO: Implement creating a new TODO item
-  // const userId = decode(jwtToken).sub
+  const userId = decode(jwtToken).sub
   const todoId = uuid.v4()
-  //const authHeader = event.headers['Authorization']
-
-  const newItem = await createTodo('vitu', todoId, newTodo)
+  
+  console.log("Decode userId: ", userId)
+  console.log("Creating todo item.")
+  const newItem = await createTodo(userId, todoId, newTodo)
   
   return {
     statusCode: 201,

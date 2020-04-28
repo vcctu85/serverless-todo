@@ -1,8 +1,8 @@
 import 'source-map-support/register'
-
+import { getToken } from '../auth/auth0Authorizer'
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 import * as AWS  from 'aws-sdk'
-// import { decode } from 'jsonwebtoken'
+import { decode } from 'jsonwebtoken'
 const docClient = new AWS.DynamoDB.DocumentClient()
 const todoTable = process.env.TODO_TABLE
 
@@ -10,13 +10,11 @@ const todoTable = process.env.TODO_TABLE
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   // TODO: Get all TODO items for a current user
   console.log(event)
-  // const authorization = event.headers.Authorization
-  // const split = authorization.split(' ')
-  // const jwtToken = split[1]
-  // // TODO: Implement creating a new TODO item
-  // // .sub or .sub.payload?
-  // const userId = decode(jwtToken).sub
-  const validGroupId = await userExists("vitu")
+  const jwtToken = getToken(event.headers['Authorization'])
+
+  const userId = decode(jwtToken).sub
+  console.log("Decoded userId: ", userId)
+  const validGroupId = await userExists(userId)
   if (!validGroupId) {
     return {
       statusCode: 404,
@@ -29,7 +27,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       })
     }
   }
-  const todo_items = await getTODOPerUser("vitu")
+  const todo_items = await getTODOPerUser(userId)
   return {
     statusCode: 201,
     headers: {
@@ -44,14 +42,14 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 }
 
 async function userExists(userId: string) {
+  console.log("Checking if user exists in table")
   const result = await docClient
     .get({
       TableName: todoTable,
       Key: {
-        id: userId
+        userId: userId
       }
-    })
-    .promise()
+    }).promise()
 
   console.log('Get user: ', result)
   return !!result.Item
@@ -59,6 +57,7 @@ async function userExists(userId: string) {
 
 
 async function getTODOPerUser(userId: string) {
+  console.log("Getting all todo items for this user")
   const result = await docClient.query({
     TableName: todoTable,
     //todo

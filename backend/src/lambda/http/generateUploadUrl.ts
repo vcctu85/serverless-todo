@@ -16,7 +16,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   console.log(todoId)
   // TODO: Return a presigned URL to upload a file for a TODO item with the provided id
   const presignedUrl = getUploadUrl(todoId)
-
+  console.log("Generated preSignedUrl: ", presignedUrl)
   return {
     statusCode: 201,
     headers: {
@@ -24,16 +24,16 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       'Access-Control-Allow-Credentials': true
     },
     body: JSON.stringify({
-      todoId_string: event['pathParameters']['todoId'],
       url_string: presignedUrl
     })
   }
 }
 
 async function getUploadUrl(todoId: string) {
+  console.log("Calling getSignedUrl")
   return s3.getSignedUrl('putObject', {
     Bucket: bucketName,
     Key: todoId,
     Expires: urlExpiration
-  })
+  }).promise()
 }
