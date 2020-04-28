@@ -5,7 +5,7 @@ import * as AWS  from 'aws-sdk'
 import { decode } from 'jsonwebtoken'
 const docClient = new AWS.DynamoDB.DocumentClient()
 const todoTable = process.env.TODO_TABLE
-
+import { getTODOPerUser } from '../../business-logic/todos-logic'
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   // TODO: Get all TODO items for a current user
@@ -55,17 +55,3 @@ async function userExists(userId: string) {
   return !!result.Item
 }
 
-
-async function getTODOPerUser(userId: string) {
-  console.log("Getting all todo items for this user")
-  const result = await docClient.query({
-    TableName: todoTable,
-    //todo
-    KeyConditionExpression: 'userId = :userId',
-    ExpressionAttributeValues: {
-      ':userId': userId
-    }
-  }).promise()
-
-  return result.Items
-}

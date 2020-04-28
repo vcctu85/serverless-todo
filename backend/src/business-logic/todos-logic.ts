@@ -5,7 +5,7 @@ import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import * as AWSXRay from 'aws-xray-sdk'
 const XAWS = AWSXRay.captureAWS(AWS)
 const urlExpiration = process.env.SIGNED_URL_EXPIRATION
-
+import { getItems } from '../data-layer/access-db'
 const s3 = new XAWS.S3({
   signatureVersion: 'v4'
 })
@@ -31,4 +31,11 @@ export async function getUploadUrl(todoId: string) {
     Key: todoId,
     Expires: urlExpiration
   }).promise()
+}
+
+export async function getTODOPerUser(userId: string) {
+  console.log("Getting all todo items for this user")
+  const result = getItems(userId)
+
+  return result.Items
 }
