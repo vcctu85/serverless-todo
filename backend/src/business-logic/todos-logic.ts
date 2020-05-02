@@ -6,11 +6,12 @@ import * as AWSXRay from 'aws-xray-sdk'
 const XAWS = AWSXRay.captureAWS(AWS)
 const urlExpiration = process.env.SIGNED_URL_EXPIRATION
 import { getItems } from '../data-layer/access-db'
+import { TodoItem } from '../models/TodoItem';
 const s3 = new XAWS.S3({
   signatureVersion: 'v4'
 })
 
-export async function createTodo(userId: string, todoId: string, newTodo: CreateTodoRequest) {
+export async function createTodo(userId: string, todoId: string, newTodo: CreateTodoRequest): Promise<TodoItem> {
   const timestamp = new Date().toISOString()
   const newItem = {
     todoId: todoId,
@@ -35,9 +36,8 @@ export async function getUploadUrl(todoId: string) {
   }).promise()
 }
 
-export async function getTODOPerUser(userId: string) {
+export async function getTODOPerUser(userId: string) : Promise<TodoItem[]> {
   console.log("Getting all todo items for this user")
   const result = getItems(userId)
-
   return result
 }

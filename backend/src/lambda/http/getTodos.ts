@@ -26,22 +26,9 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true
     },
-    body: JSON.stringify(event)
-  }
+    body: JSON.stringify({todo_items})
+  };
   
 }
 
-// async function userExists(userId: string) {
-//   const result = await docClient
-//     .get({
-//       TableName: todoTable,
-//       Key: {
-//         id: userId
-//       }
-//     })
-//     .promise()
-
-//   console.log('Get user: ', result)
-//   return !!result.Item
-// }
 
