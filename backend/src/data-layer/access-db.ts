@@ -19,8 +19,8 @@ export async function deleteItem(todoId, userId) {
     await docClient.delete({
         TableName: todoTable,
         Key: {
-          todoId: todoId,
-          userId: userId
+          userId: userId,
+          todoId: todoId
         }
       }).promise()
 }

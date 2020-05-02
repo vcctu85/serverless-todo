@@ -16,7 +16,7 @@ provider:
   region: ${opt:region, 'us-east-1'}
 
   environment:
-    TODO_TABLE: Todo-${self:provider.stage}
+    TODO_TABLE: Todo-Items-${self:provider.stage}
     TODO_ID_INDEX: TodoIdIndex
     IMAGES_S3_BUCKET: vcctu85-todo-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
@@ -165,26 +165,26 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
-          - AttributeName: todoId
-            AttributeType: S
           - AttributeName: userId
+            AttributeType: S
+          - AttributeName: todoId
             AttributeType: S
         KeySchema:
-          - AttributeName: todoId
-            KeyType: HASH
           - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: todoId
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.TODO_TABLE}
-        LocalSecondaryIndexes:
-          - IndexName: ${self:provider.environment.TODO_ID_INDEX}
-            KeySchema:
-              - AttributeName: todoId
-                KeyType: HASH
-              - AttributeName: userId
-                KeyType: RANGE
-            Projection:
-              ProjectionType: ALL # What attributes will be copied to an index
+        # LocalSecondaryIndexes:
+        #   - IndexName: ${self:provider.environment.TODO_ID_INDEX}
+        #     KeySchema:
+        #       - AttributeName: userId
+        #         KeyType: HASH
+        #       - AttributeName: todoId
+        #         KeyType: RANGE
+        #     Projection:
+        #       ProjectionType: ALL # What attributes will be copied to an index
 
     AttachmentsBucket:
       Type: AWS::S3::Bucket
@@ -219,14 +219,14 @@ resources:
               Resource: 'arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*'
         Bucket: !Ref AttachmentsBucket
 
-        # Gateway:
-        #   Type: AWS::ApiGateway::GatewayResponse
-        #   Properties:
-        #     ResponseParameters:
-        #       gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
-        #       gatewayresponse.header.Access-Control-Allow-Credentials: "'true'"
-        #       gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
-        #       gatewayresponse.header.Access-Control-Allow-Methods: "'*'"
-        #     ResponseType: DEFAULT_4XX
-        #     RestApiId:
-        #       Ref: ApiGatewayRestApi     
+    Gateway:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Credentials: "'true'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: ApiGatewayRestApi     

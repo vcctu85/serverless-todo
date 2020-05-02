@@ -14,42 +14,41 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
   const userId = decode(jwtToken).sub
   console.log("Decoded userId: ", userId)
-  const validUserId = await userExists(userId)
-  if (!validUserId) {
-    return {
-      statusCode: 404,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': true
-      },
-      body: JSON.stringify({
-        error: 'User does not exist'
-      })
-    }
-  }
+  //const validUserId = await userExists(userId)
+  // if (!validUserId) {
+  //   return {
+  //     statusCode: 404,
+  //     headers: {
+  //       'Access-Control-Allow-Origin': '*',
+  //       'Access-Control-Allow-Credentials': true
+  //     },
+  //     body: JSON.stringify({
+  //       error: 'Group does not exist'
+  //     })
+  //   }
+  // }
   const todo_items = await getTODOPerUser(userId)
+  console.log(todo_items)
   return {
     statusCode: 201,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true
     },
-    body: JSON.stringify({
-      todo_items
-    })
+    body: userId
   }
   
 }
 
 async function userExists(userId: string) {
-  console.log("Checking if user exists in table")
   const result = await docClient
     .get({
       TableName: todoTable,
       Key: {
-        userId: userId
+        id: userId
       }
-    }).promise()
+    })
+    .promise()
 
   console.log('Get user: ', result)
   return !!result.Item
