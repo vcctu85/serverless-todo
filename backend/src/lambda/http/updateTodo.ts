@@ -14,7 +14,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   // TODO: Update a TODO item with the provided id using values in the "updatedTodo" object
   console.log("TodoId: ", todoId)
   console.log("Updating TODO")
-  updateItem(updatedTodo, todoId)
+  const newTodo = updateItem(updatedTodo, todoId)
 
   return {
     statusCode: 201,
@@ -22,6 +22,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true
     },
-    body: "Updated todo item"
+    body: JSON.stringify({
+      newTodo
+ })
   }
 }

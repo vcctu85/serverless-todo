@@ -28,12 +28,12 @@ export async function deleteItem(todoId, userId) {
 export async function getItems(userId) : Promise<TodoItem[]> {
     const result = await docClient.query({
         TableName: todoTable,
-        //todo
         KeyConditionExpression: 'userId = :userId',
         ExpressionAttributeValues: {
           ':userId': userId
         }
       }).promise()
+
     return result.Items as TodoItem[]
 
 }
@@ -66,7 +66,6 @@ export async function setAttachmentUrl(todoId, userId, presignedUrl) {
         ExpressionAttributeValues: {
           ':presignedUrl': presignedUrl,
         },
-        // ReturnValues: 'UPDATED_NEW',
       })
       .promise();
   }

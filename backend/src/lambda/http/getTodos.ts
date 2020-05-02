@@ -14,8 +14,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
   const userId = decode(jwtToken).sub
   console.log("Decoded userId: ", userId)
-  const validGroupId = await userExists(userId)
-  if (!validGroupId) {
+  const validUserId = await userExists(userId)
+  if (!validUserId) {
     return {
       statusCode: 404,
       headers: {

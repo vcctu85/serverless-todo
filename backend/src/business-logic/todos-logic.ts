@@ -16,12 +16,14 @@ export async function createTodo(userId: string, todoId: string, newTodo: Create
     todoId: todoId,
     userId: userId,
     createdAt: timestamp,
-    ...newTodo,
+    name: newTodo.name,
+    dueDate: newTodo.dueDate,
     done: false,
     imageUrl: `https://${bucketName}/s3.amazonaws.com/${todoId}`
   }
 
   console.log('Storing new item: ', newItem)
+  return newItem
 }
 
 export async function getUploadUrl(todoId: string) {
