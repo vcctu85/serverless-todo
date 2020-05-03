@@ -14,6 +14,7 @@ export async function getTodos(idToken: string): Promise<Todo[]> {
     },
   })
   console.log('Todos:', response.data)
+  console.log('Items:', response.data.items)
   return response.data.items
 }
 

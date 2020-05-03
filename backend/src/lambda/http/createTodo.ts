@@ -1,6 +1,6 @@
 import 'source-map-support/register'
 
-import * as uuid from 'uuid'
+
 import { getToken } from '../auth/auth0Authorizer'
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 import { decode } from 'jsonwebtoken'
@@ -18,11 +18,13 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const jwtToken = getToken(event.headers['Authorization'])
   // // TODO: Implement creating a new TODO item
   const userId = decode(jwtToken).sub
-  const todoId = uuid.v4()
+  
   
   console.log("Decode userId: ", userId)
   console.log("Creating todo item.")
-  const newItem = await createTodo(userId, todoId, newTodo)
+  logger.info('auth user id', userId)
+  logger.info('processing event: ', event)
+  const newItem = await createTodo(userId, newTodo)
   
   return {
     statusCode: 201,
@@ -31,7 +33,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       'Access-Control-Allow-Credentials': true
     },
     body: JSON.stringify({
-         newItem
+      item: newItem
     })
   }
 }

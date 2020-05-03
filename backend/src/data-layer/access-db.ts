@@ -4,7 +4,7 @@ const todoTable = process.env.TODO_TABLE
 import { TodoItem } from '../models/TodoItem'
 //import { TodoUpdate } from '../models/TodoUpdate'
 
-export async function create(newItem) : Promise<TodoItem> {
+export async function putItem(newItem) : Promise<TodoItem> {
 
     await docClient
         .put({
@@ -25,16 +25,16 @@ export async function deleteItem(todoId, userId) {
       }).promise()
 }
 
-export async function getItems(userId) : Promise<TodoItem[]> {
+export async function getItems(userId){
     const result = await docClient.query({
         TableName: todoTable,
         KeyConditionExpression: 'userId = :userId',
         ExpressionAttributeValues: {
           ':userId': userId
         }
-      }).promise()
-
-    return result.Items as TodoItem[]
+      }).promise();
+    
+    return result.Items
 
 }
 

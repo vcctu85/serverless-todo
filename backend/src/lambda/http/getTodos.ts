@@ -18,7 +18,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const userId = decode(jwtToken).sub
   console.log("Decoded userId: ", userId)
 
-  const todo_items = await getTODOPerUser(userId)
+  let todo_items = await getTODOPerUser(userId)
   console.log(todo_items)
   return {
     statusCode: 201,
@@ -26,7 +26,9 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true
     },
-    body: JSON.stringify({todo_items})
+    body: JSON.stringify({
+      items: todo_items
+    })
   };
   
 }
