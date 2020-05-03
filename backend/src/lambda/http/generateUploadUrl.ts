@@ -13,11 +13,12 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const jwtToken = getToken(event.headers['Authorization'])
   // TODO: Implement creating a new TODO item
   const userId = decode(jwtToken).sub
-  const imageUrl = `https://${bucketName}/s3.amazonaws.com/${todoId}`
+  const imageUrl = `https://${bucketName}.s3.amazonaws.com/${todoId}`
   await setAttachmentUrl(todoId, userId, imageUrl)
   // TODO: Return a presigned URL to upload a file for a TODO item with the provided id
   const uploadUrl = await getUploadUrl(todoId)
   //console.log("Generated preSignedUrl: ", presignedUrl)
+  
   return {
     statusCode: 201,
     headers: {
