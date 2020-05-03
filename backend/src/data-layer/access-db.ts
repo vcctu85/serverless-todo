@@ -38,11 +38,12 @@ export async function getItems(userId){
 
 }
 
-export async function updateItem(updatedTodo, todoId) {
+export async function updateItem(updatedTodo, todoId, userId) {
     await docClient.update({
         TableName: todoTable,
         Key: {
           todoId: todoId,
+          userId: userId
         },
         UpdateExpression: 'set name=:x, dueDate=:y, done=:z',
         ExpressionAttributeValues: {
