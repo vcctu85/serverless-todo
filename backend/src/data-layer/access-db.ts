@@ -69,12 +69,11 @@ export async function updateItem(updatedTodo, todoId, userId) {
       
 }
 
-export async function setAttachmentUrl(todoId, userId, presignedUrl) {
+export async function setAttachmentUrl(todoId, presignedUrl) {
     await docClient.update({
         TableName: todoTable,
         Key: {
-          todoId,
-          userId,
+          todoId: todoId,
         },
         UpdateExpression: 'set attachmentUrl = :presignedUrl',
         ExpressionAttributeValues: {

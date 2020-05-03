@@ -151,7 +151,7 @@ functions:
         Action:
           - s3:PutObject
           - s3:GetObject
-        Resource: arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}
+        Resource: arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*
       - Effect: Allow
         Action:
           - xray:PutTelemetryRecords
@@ -215,18 +215,20 @@ resources:
             - Sid: PublicReadForGetBucketObjects
               Effect: Allow
               Principal: '*'
-              Action: 's3:GetObject'
-              Resource: 'arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*'
+              Action: 
+                - s3:GetObject
+                - s3:PutObject
+              Resource: arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*
         Bucket: !Ref AttachmentsBucket
 
     Gateway:
       Type: AWS::ApiGateway::GatewayResponse
       Properties:
         ResponseParameters:
-          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
-          gatewayresponse.header.Access-Control-Allow-Credentials: "'true'"
-          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
-          gatewayresponse.header.Access-Control-Allow-Methods: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Origin: '*'
+          gatewayresponse.header.Access-Control-Allow-Credentials: 'true'
+          gatewayresponse.header.Access-Control-Allow-Headers: '*'
+          gatewayresponse.header.Access-Control-Allow-Methods: '*'
         ResponseType: DEFAULT_4XX
         RestApiId:
           Ref: ApiGatewayRestApi     

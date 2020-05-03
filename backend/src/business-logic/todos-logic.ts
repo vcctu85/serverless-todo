@@ -21,8 +21,8 @@ export async function createTodo(userId: string, newTodo: CreateTodoRequest): Pr
     userId: userId,
     createdAt: timestamp,
     done: false,
-    ...newTodo,
-    attachmentUrl: `https://${bucketName}/s3.amazonaws.com/${todoId}`
+    ...newTodo
+    //attachmentUrl: `https://${bucketName}/s3.amazonaws.com/${todoId}`
   }
 
   console.log('Storing new item: ', newItem)
