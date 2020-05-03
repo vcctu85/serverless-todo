@@ -154,6 +154,11 @@ functions:
         Resource: arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*
       - Effect: Allow
         Action:
+          - dynamodb:UpdateItem
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODO_TABLE}
+      - Effect: Allow
+        Action:
           - xray:PutTelemetryRecords
           - xray:PutTraceSegments
         Resource: "*"
@@ -225,10 +230,10 @@ resources:
       Type: AWS::ApiGateway::GatewayResponse
       Properties:
         ResponseParameters:
-          gatewayresponse.header.Access-Control-Allow-Origin: '*'
-          gatewayresponse.header.Access-Control-Allow-Credentials: 'true'
-          gatewayresponse.header.Access-Control-Allow-Headers: '*'
-          gatewayresponse.header.Access-Control-Allow-Methods: '*'
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Credentials: "'true'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'*'"
         ResponseType: DEFAULT_4XX
         RestApiId:
           Ref: ApiGatewayRestApi     

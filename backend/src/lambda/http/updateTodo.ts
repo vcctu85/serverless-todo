@@ -3,7 +3,7 @@ import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 import { getToken } from '../auth/auth0Authorizer'
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
-import { updateItem } from '../../data-layer/access-db'
+import { updateTodo } from '../../business-logic/todos-logic'
 import { decode } from 'jsonwebtoken'
 
 
@@ -16,7 +16,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   console.log("Updating TODO")
   const jwtToken = getToken(event.headers['Authorization'])
   const userId = decode(jwtToken).sub
-  const newTodo = await updateItem(updatedTodo, todoId, userId)
+  console.log(userId)
+  const newTodo = await updateTodo(updatedTodo, todoId, userId)
 
   return {
     statusCode: 201,

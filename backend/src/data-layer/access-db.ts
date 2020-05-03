@@ -51,29 +51,33 @@ export async function getItems(userId){
 
 }
 
-export async function updateItem(updatedTodo, todoId, userId) {
+export async function updateItem(todoId, userId, updatedTodo) {
     await docClient.update({
         TableName: todoTable,
         Key: {
           todoId: todoId,
           userId: userId
         },
-        UpdateExpression: 'set name=:x, dueDate=:y, done=:z',
+        UpdateExpression: 'set #a =:x, dueDate=:y, done=:z',
         ExpressionAttributeValues: {
         ':x' : updatedTodo.name,
         ':y' : updatedTodo.dueDate,
         ':z' : updatedTodo.done,
+        },
+        ExpressionAttributeNames: {
+          '#a': 'name'
         }
         
       }).promise();
       
 }
 
-export async function setAttachmentUrl(todoId, presignedUrl) {
+export async function setAttachmentUrl(todoId, userId, presignedUrl) {
     await docClient.update({
         TableName: todoTable,
         Key: {
           todoId: todoId,
+          userId: userId
         },
         UpdateExpression: 'set attachmentUrl = :presignedUrl',
         ExpressionAttributeValues: {

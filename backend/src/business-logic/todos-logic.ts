@@ -2,12 +2,14 @@
 const bucketName = process.env.IMAGES_S3_BUCKET
 import * as AWS  from 'aws-sdk'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
+import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 import * as AWSXRay from 'aws-xray-sdk'
 const XAWS = AWSXRay.captureAWS(AWS)
 const urlExpiration = process.env.SIGNED_URL_EXPIRATION
-import { getItems, deleteItem, getItem, putItem } from '../data-layer/access-db'
+import { getItems, deleteItem, getItem, putItem, updateItem } from '../data-layer/access-db'
 import { TodoItem } from '../models/TodoItem';
 import * as uuid from 'uuid'
+
 
 const s3 = new XAWS.S3({
   signatureVersion: 'v4'
@@ -22,7 +24,6 @@ export async function createTodo(userId: string, newTodo: CreateTodoRequest): Pr
     createdAt: timestamp,
     done: false,
     ...newTodo
-    //attachmentUrl: `https://${bucketName}/s3.amazonaws.com/${todoId}`
   }
 
   console.log('Storing new item: ', newItem)
@@ -36,7 +37,7 @@ export async function getUploadUrl(todoId: string) {
     Bucket: bucketName,
     Key: todoId,
     Expires: urlExpiration
-  }).promise();
+  })
 }
 
 export async function getTODOPerUser(userId: string) {
@@ -49,4 +50,9 @@ export async function deleteTodo(todoId, userId) {
   const item = await getItem(userId, todoId)
   console.log(item)
   await deleteItem(todoId, userId)
+}
+export async function updateTodo(updateTodo:UpdateTodoRequest, todoId, userId) {
+  const item = await getItem(userId, todoId)
+  console.log(item)
+  await updateItem(todoId, userId, updateTodo)
 }
