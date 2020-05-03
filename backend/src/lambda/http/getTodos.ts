@@ -3,8 +3,6 @@ import { getToken } from '../auth/auth0Authorizer'
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 // import * as AWS  from 'aws-sdk'
 import { decode } from 'jsonwebtoken'
-// const docClient = new AWS.DynamoDB.DocumentClient()
-// const todoTable = process.env.TODO_TABLE
 import { getTODOPerUser } from '../../business-logic/todos-logic'
 import { createLogger } from '../../utils/logger'
 

@@ -33,7 +33,7 @@ export async function createTodo(userId: string, newTodo: CreateTodoRequest): Pr
 
 export async function getUploadUrl(todoId: string) {
   console.log("Calling getSignedUrl")
-  return s3.getSignedUrl('putObject', {
+  return await s3.getSignedUrl('putObject', {
     Bucket: bucketName,
     Key: todoId,
     Expires: urlExpiration
