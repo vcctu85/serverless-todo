@@ -2,10 +2,10 @@ import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 import {getUploadUrl} from '../../business-logic/todos-logic'
-//import { setAttachmentUrl } from '../../data-layer/access-db'
-//import { getToken } from '../auth/auth0Authorizer'
-//import { decode } from 'jsonwebtoken'
-//const bucketName = process.env.IMAGES_S3_BUCKET
+// import { setAttachmentUrl } from '../../data-layer/access-db'
+// import { getToken } from '../auth/auth0Authorizer'
+// import { decode } from 'jsonwebtoken'
+// const bucketName = process.env.IMAGES_S3_BUCKET
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const todoId = event['pathParameters']['todoId']
@@ -15,8 +15,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   //const userId = decode(jwtToken).sub
   //await setAttachmentUrl(todoId, userId, `https://${bucketName}/s3.amazonaws.com/${todoId}`)
   // TODO: Return a presigned URL to upload a file for a TODO item with the provided id
-  const presignedUrl = await getUploadUrl(todoId)
-  console.log("Generated preSignedUrl: ", presignedUrl)
+  const uploadUrl = await getUploadUrl(todoId)
+  //console.log("Generated preSignedUrl: ", presignedUrl)
   return {
     statusCode: 201,
     headers: {
@@ -24,7 +24,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       'Access-Control-Allow-Credentials': true
     },
     body: JSON.stringify({
-      presignedUrl: presignedUrl
+      uploadUrl: uploadUrl
     })
   }
 }

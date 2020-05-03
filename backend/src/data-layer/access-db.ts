@@ -76,7 +76,7 @@ export async function setAttachmentUrl(todoId, userId, presignedUrl) {
           todoId,
           userId,
         },
-        UpdateExpression: 'set presignedUrl = :presignedUrl',
+        UpdateExpression: 'set attachmentUrl = :presignedUrl',
         ExpressionAttributeValues: {
           ':presignedUrl': presignedUrl,
         },

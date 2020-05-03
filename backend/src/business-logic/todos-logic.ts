@@ -21,8 +21,8 @@ export async function createTodo(userId: string, newTodo: CreateTodoRequest): Pr
     userId: userId,
     createdAt: timestamp,
     done: false,
-    presignedUrl: `https://${bucketName}/s3.amazonaws.com/${todoId}`,
-    ...newTodo
+    ...newTodo,
+    attachmentUrl: `https://${bucketName}/s3.amazonaws.com/${todoId}`
   }
 
   console.log('Storing new item: ', newItem)
@@ -36,7 +36,7 @@ export async function getUploadUrl(todoId: string) {
     Bucket: bucketName,
     Key: todoId,
     Expires: urlExpiration
-  }).promise()
+  }).promise();
 }
 
 export async function getTODOPerUser(userId: string) {
