@@ -5,10 +5,10 @@ import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 import * as AWSXRay from 'aws-xray-sdk'
 const XAWS = AWSXRay.captureAWS(AWS)
 const urlExpiration = process.env.SIGNED_URL_EXPIRATION
-import { getItems } from '../data-layer/access-db'
-import { putItem } from '../data-layer/access-db'
+import { getItems, deleteItem, getItem, putItem } from '../data-layer/access-db'
 import { TodoItem } from '../models/TodoItem';
 import * as uuid from 'uuid'
+
 const s3 = new XAWS.S3({
   signatureVersion: 'v4'
 })
@@ -21,7 +21,7 @@ export async function createTodo(userId: string, newTodo: CreateTodoRequest): Pr
     userId: userId,
     createdAt: timestamp,
     done: false,
-    imageUrl: `https://${bucketName}/s3.amazonaws.com/${todoId}`,
+    presignedUrl: `https://${bucketName}/s3.amazonaws.com/${todoId}`,
     ...newTodo
   }
 
@@ -41,6 +41,12 @@ export async function getUploadUrl(todoId: string) {
 
 export async function getTODOPerUser(userId: string) {
   console.log("Getting all todo items for this user")
-  const result = getItems(userId)
+  const result = await getItems(userId)
   return result
+}
+
+export async function deleteTodo(todoId, userId) {
+  const item = await getItem(userId, todoId)
+  console.log(item)
+  await deleteItem(todoId, userId)
 }

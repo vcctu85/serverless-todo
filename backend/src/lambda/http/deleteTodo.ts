@@ -3,7 +3,7 @@ import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 import { decode } from 'jsonwebtoken'
 import { getToken } from '../auth/auth0Authorizer'
-import { deleteItem } from '../../data-layer/access-db'
+import { deleteTodo } from '../../business-logic/todos-logic'
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const todoId = event.pathParameters.todoId
@@ -14,7 +14,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     console.log("Decoded userId: ", userId)
     console.log("Deleting todo item.")
 
-    deleteItem(todoId, userId)
+    await deleteTodo(todoId, userId)
 
     return {
       statusCode: 201,

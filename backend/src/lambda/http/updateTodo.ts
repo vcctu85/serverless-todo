@@ -16,7 +16,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   console.log("Updating TODO")
   const jwtToken = getToken(event.headers['Authorization'])
   const userId = decode(jwtToken).sub
-  const newTodo = updateItem(updatedTodo, todoId, userId)
+  const newTodo = await updateItem(updatedTodo, todoId, userId)
 
   return {
     statusCode: 201,

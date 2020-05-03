@@ -16,13 +16,26 @@ export async function putItem(newItem) : Promise<TodoItem> {
 }
 
 export async function deleteItem(todoId, userId) {
-    await docClient.delete({
+    const deletedItem = await docClient.delete({
         TableName: todoTable,
         Key: {
           userId: userId,
           todoId: todoId
         }
-      }).promise()
+      }).promise();
+    return deletedItem;
+}
+
+export async function getItem(userId, todoId) {
+  const result = await docClient.query({
+    TableName: todoTable,
+    KeyConditionExpression: 'userId = :userId and todoId = :todoId',
+    ExpressionAttributeValues: {
+      ':todoId': todoId,
+      ':userId': userId
+    }
+  }).promise();
+  return result.Items[0]
 }
 
 export async function getItems(userId){
@@ -52,7 +65,7 @@ export async function updateItem(updatedTodo, todoId, userId) {
         ':z' : updatedTodo.done,
         }
         
-      }).promise()
+      }).promise();
       
 }
 
