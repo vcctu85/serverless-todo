@@ -40,7 +40,7 @@ custom:
     - name: CreateTodo
       contentType: application/json
       schema: ${file(models/create-todo-model.json)}
-    - name: updateTodo
+    - name: UpdateTodo
       contentType: application/json
       schema: ${file(models/update-todo-model.json)}
 
@@ -261,7 +261,7 @@ resources:
           gatewayresponse.header.Access-Control-Allow-Methods: "'*'"
         ResponseType: DEFAULT_4XX
         RestApiId:
-          Ref: ApiGatewayRestApi  
+          Ref: ApiGatewayRestApi
 
     RequestValidator:
       Type: AWS::ApiGateway::RequestValidator
